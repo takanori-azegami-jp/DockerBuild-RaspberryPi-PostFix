@@ -1,6 +1,11 @@
 # DockerBuild-RaspberryPi-PostFix
 RaspberryPi(64bit)にDockerでPostFixを構築
 
+## 環境
+カーネル：xxx
+OS：xxx
+SSL証明書：Let's Encrypt
+
 ## Dockerコマンド
 ```bash
 # Docker-compose実行
