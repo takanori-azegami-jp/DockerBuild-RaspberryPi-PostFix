@@ -11,8 +11,8 @@ RUN apt-get update && \
 ENV LANG "ja_JP.UTF-8"
 ENV LC_CTYPE "ja_JP.UTF-8"
 
-# postfix、SASL2、mailutilsをインストール
-RUN apt install postfix sasl2-bin mailutils  -y
+# postfix、SASL2、mailutils、nkfをインストール
+RUN apt install postfix sasl2-bin mailutils nkf  -y
 
 # 掃除
 RUN apt-get clean
