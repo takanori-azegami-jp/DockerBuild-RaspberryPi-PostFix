@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  postfix:
+    build:
+      context: ./
+      dockerfile: dockerfile-postfix
+    image: postfix
+    container_name: postfix
+    environment:
+      TZ: Asia/Tokyo
+    volumes:
+      # Postfixの設定をマウントする
+      - ./conf/main.cf:/etc/postfix/main.cf
+      - ./conf/master.cf:/etc/postfix/master.cf
+      # Let's EncryptでSSL化
+      - /etc/letsencrypt:/etc/letsencrypt
+      # ログ出力ディレクトリ
+      - postfix-log:/var/log/postfix
+volumes:
+  postfix-log:
+    driver: local

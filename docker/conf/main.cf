@@ -1,0 +1,79 @@
+#---------------------
+# 注：★を箇所を変更する
+#---------------------
+
+# 下位互換性の無効化（レベル2）
+compatibility_level = 2
+# メールオーナーを指定
+mail_owner = postfix
+
+# 各種ディレクトリィ
+command_directory = /usr/sbin
+daemon_directory = /usr/lib/postfix/sbin
+data_directory = /var/lib/postfix
+sendmail_path = /usr/sbin/postfix
+newaliases_path = /usr/bin/newaliases
+mailq_path = /usr/bin/mailq
+# ログ出力設定
+maillog_file = /var/log/postfix/mail.log
+
+# ★メールサーバのホスト名(FQDN)を指定
+myhostname = ホスト名＋ドメイン名(例：mail.hoge.com)
+# ★メールサーバのドメイン名を指定
+mydomain = ドメイン名（例：hoge.com）
+# メールアドレスを「ユーザ名@ドメイン名」の形式にする
+myorigin = $mydomain
+# 全てのホストからメールを受信する
+inet_interfaces = all
+# ip4を使う
+inet_protocols = ipv4
+# mydomain = で指定したドメイン宛のメールを受信する
+mydestination = $myhostname, localhost.$mydomain, localhost, $mydomain
+# relay_domainsも同様
+relay_domains = $mydestination
+# メール送信は自サーバのみ
+mynetworks = 127.0.0.0/8,192.168.0.0/24,10.0.0.0/8
+
+# Maildir形式を指定
+home_mailbox = Maildir/
+#知らないユーザでも受け入れる
+local_recipient_maps =
+# PostFix情報を非表示にする
+mtpd_banner = $myhostname ESMTP unknown
+# ディレクトリを所有するグループ
+setgid_group = postdrop
+
+### SSL/TLS Settings
+# TLSを有効化
+smtpd_use_tls = yes
+# 宛先のメールサーバがTLSに対応していれば、通信を暗号化する
+smtp_tls_security_level = may
+# ★サーバ証明書と秘密鍵を指定
+smtpd_tls_cert_file = /etc/letsencrypt/live/mail.(ドメイン名)/fullchain.pem
+smtpd_tls_key_file = /etc/letsencrypt/live/mail.(ドメイン名)/privkey.pem
+# 接続キャッシュファイルの指定
+smtpd_tls_session_cache_database = btree:/var/lib/postfix/smtpd_scache
+# キャッシュの保持時間の指定
+smtpd_tls_session_cache_timeout = 3600s
+# 暗号に関する情報を "Received:" メッセージヘッダに含める
+smtpd_tls_received_header = yes
+# TLSログレベルの設定
+# 0:出力しない 1:TLSハンドシェイクと証明書情報 2:TLSネゴシエーションの全て
+smtpd_tls_loglevel = 2
+# TLS暗号化プロトコルはTLSv1.2以上
+smtp_tls_protocols = >=TLSv1.2
+
+#SMTP認証用の設定
+smtpd_sasl_auth_enable = yes
+# 匿名ユーザ拒否
+smtp_sasl_tls_security_options = noanonymous
+# 認証ホスト名
+smtpd_sasl_local_domain = $myhostname
+# 接続時の制限指定
+smtpd_recipient_restrictions = permit_mynetworks permit_sasl_authenticated reject_unauth_destination
+# 古いバージョンのAUTHコマンドを有効にする
+broken_sasl_auth_clients = yes
+
+## 送受信メールサイズを10Mに、メールボックスの最大サイズを1Gに設定
+message_size_limit = 10485760
+mailbox_size_limit = 1073741824
